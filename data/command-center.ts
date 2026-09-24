@@ -7,7 +7,9 @@ export const clients = [
   { id: "prudential", name: "Prudential", industry: "Insurance", geography: "Hong Kong / APAC", relationship: "Multiple active threads", focus: "Oracle AI + CFO companion", maturityStatus: "Not Assessed", maturity: {} },
   { id: "fwd", name: "FWD", industry: "Insurance", geography: "Hong Kong / APAC", relationship: "Delivery collaboration", focus: "Actuarial AI", maturityStatus: "Not Assessed", maturity: {} },
   { id: "sun-life", name: "Sun Life", industry: "Insurance", geography: "Hong Kong", relationship: "Workshop and demo", focus: "Reinsurance Treaty", maturityStatus: "Not Assessed", maturity: {} },
-  { id: "others", name: "Others", industry: "Cross-sector", geography: "Hong Kong", relationship: "Early discussions", focus: "AI adoption and workforce", maturityStatus: "Not Assessed", maturity: {} },
+  { id: "as-watson", name: "AS Watson", industry: "Consumer / Retail", geography: "Hong Kong / APAC", relationship: "Early discussions", focus: "AI adoption and workforce", maturityStatus: "Not Assessed", maturity: {} },
+  { id: "hkt", name: "HKT", industry: "Technology / Telecoms", geography: "Hong Kong", relationship: "Early discussions", focus: "AI product delivery", maturityStatus: "Not Assessed", maturity: {} },
+  { id: "hkjc", name: "HKJC", industry: "Sports / Entertainment", geography: "Hong Kong", relationship: "Early discussions", focus: "AI product delivery", maturityStatus: "Not Assessed", maturity: {} },
 ] as const;
 
 export const opportunities = [
@@ -20,7 +22,10 @@ export const opportunities = [
   { id: "fwd-actuarial", clientId: "fwd", name: "AI in Actuarial", currentPosition: "Supporting TRNF / ACT team with AI", probability: "Medium / Low" as Probability, status: "Active", capabilityIds: ["actuarial-fpa"], assetIds: ["reintreatyiq"], owner: "[Assign owner]", nextAction: "Confirm use case shortlist" },
   { id: "fwd-compliance", clientId: "fwd", name: "Compliance Dashboard", currentPosition: "Collaboration with Trusted AI for embedded dashboard", probability: "Low" as Probability, status: "Exploring", capabilityIds: ["governance"], assetIds: ["ai-reporting"], owner: "[Assign owner]", nextAction: "Validate data access" },
   { id: "sun-life-reinsurance", clientId: "sun-life", name: "Reinsurance Treaty", currentPosition: "Workshop and demo · New asset built", probability: "Low" as Probability, status: "Demo", capabilityIds: ["rapid-build"], assetIds: ["reintreatyiq"], owner: "[Assign owner]", nextAction: "Plan next demo" },
-  { id: "others-discussions", clientId: "others", name: "AI adoption, workforce and product delivery", currentPosition: "Supporting team on the ground with AI proposition", probability: "Medium / Low" as Probability, status: "Discovery", capabilityIds: ["rapid-build", "governance"], assetIds: ["talentiq", "proposal- iq"], owner: "[Assign owner]", nextAction: "Prioritise target accounts" },
+  { id: "as-watson-discussions", clientId: "as-watson", name: "AI adoption and workforce", currentPosition: "Early discussion around AI adoption and workforce enablement", probability: "Medium / Low" as Probability, status: "Discovery", capabilityIds: ["governance"], assetIds: ["talentiq"], owner: "[Assign owner]", nextAction: "Identify priority workforce use cases" },
+  { id: "hkt-product", clientId: "hkt", name: "AI product delivery", currentPosition: "Early discussion around product delivery opportunities", probability: "Medium / Low" as Probability, status: "Discovery", capabilityIds: ["rapid-build"], assetIds: ["deliveryiq"], owner: "[Assign owner]", nextAction: "Map product opportunity" },
+  { id: "hkjc-product", clientId: "hkjc", name: "AI product delivery", currentPosition: "Early discussion around product delivery opportunities", probability: "Medium / Low" as Probability, status: "Discovery", capabilityIds: ["rapid-build"], assetIds: ["insightsiq"], owner: "[Assign owner]", nextAction: "Confirm business sponsor" },
+  { id: "prudential-training", clientId: "prudential", name: "Prudential Training", currentPosition: "Supporting change team technical AI delivery trainings", probability: "Medium" as Probability, status: "Active", capabilityIds: ["governance"], assetIds: ["trusted-ai", "talentiq"], owner: "[Assign owner]", nextAction: "Agree training backlog" },
 ];
 
 export const capabilities = [

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "iLab AI Assurance Gateway",
-  description: "Independent validation and control for enterprise AI responses.",
+  title: "iLab AI Strategy Hub",
+  description: "A connected view of iLab strategy, capabilities, assets and client opportunities.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
