@@ -2,15 +2,80 @@
 
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import { assets, capabilities, clients, collaborations, opportunities, povs, readiness, roadmap } from "../data/command-center";
+import {
+  assets,
+  capabilities,
+  clients,
+  collaborations,
+  opportunities,
+  povs,
+  readiness,
+  roadmap,
+} from "../data/command-center";
 
-const sections = ["Overview", "Portfolio", "Pipeline", "Readiness", "Roadmap", "Ecosystem", "What we need"];
-function jump(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); }
-function Logo({ name, index }: { name: string; index: number }) { return <span className={`logo logo-${index}`}>{name.slice(0, 2)}</span>; }
-function Detail({ title, text, close }: { title: string; text: string; close: () => void }) { return <><button className="drawer-backdrop open" onClick={close} aria-label="Close detail"/><aside className="intelligence-drawer open"><button className="close" onClick={close} aria-label="Close">×</button><span className="eyebrow">INTELLIGENCE DETAIL</span><h2>{title}</h2><p className="drawer-lead">{text}</p><div className="detail-rows"><div><span>OWNER</span><strong>[Assign owner]</strong></div><div><span>STATUS</span><strong>Editable placeholder</strong></div><div><span>NEXT ACTION</span><strong>[Add next action]</strong></div></div></aside></>; }
+const sections = [
+  "Overview",
+  "Portfolio",
+  "Pipeline",
+  "Readiness",
+  "Roadmap",
+  "Ecosystem",
+  "What we need",
+];
+function jump(id: string) {
+  document
+    .getElementById(id)
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function Logo({ name, index }: { name: string; index: number }) {
+  return <span className={`logo logo-${index}`}>{name.slice(0, 2)}</span>;
+}
+function Detail({
+  title,
+  text,
+  close,
+}: {
+  title: string;
+  text: string;
+  close: () => void;
+}) {
+  return (
+    <>
+      <button
+        className="drawer-backdrop open"
+        onClick={close}
+        aria-label="Close detail"
+      />
+      <aside className="intelligence-drawer open">
+        <button className="close" onClick={close} aria-label="Close">
+          ×
+        </button>
+        <span className="eyebrow">INTELLIGENCE DETAIL</span>
+        <h2>{title}</h2>
+        <p className="drawer-lead">{text}</p>
+        <div className="detail-rows">
+          <div>
+            <span>OWNER</span>
+            <strong>[Assign owner]</strong>
+          </div>
+          <div>
+            <span>STATUS</span>
+            <strong>Editable placeholder</strong>
+          </div>
+          <div>
+            <span>NEXT ACTION</span>
+            <strong>[Add next action]</strong>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
 
 export default function Presentation() {
-  const [detail, setDetail] = useState<{ title: string; text: string } | null>(null);
+  const [detail, setDetail] = useState<{ title: string; text: string } | null>(
+    null,
+  );
   const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
   const [probabilityFilter, setProbabilityFilter] = useState("All probability");
   const [statusFilter, setStatusFilter] = useState("All status");
@@ -18,56 +83,619 @@ export default function Presentation() {
   const [maturityFilter, setMaturityFilter] = useState("All maturity");
   const [budget, setBudget] = useState(500);
   useEffect(() => {
-    const getSlides = () => Array.from(document.querySelectorAll<HTMLElement>(".presentation main > section"));
+    const getSlides = () =>
+      Array.from(
+        document.querySelectorAll<HTMLElement>(".presentation main > section"),
+      );
     let locked = false;
     let touchStart = 0;
     const go = (direction: number) => {
       if (locked) return;
       const slides = getSlides();
-      const current = slides.reduce((closest, slide, index) => Math.abs(slide.getBoundingClientRect().top) < Math.abs(slides[closest].getBoundingClientRect().top) ? index : closest, 0);
-      const next = Math.max(0, Math.min(slides.length - 1, current + direction));
+      const current = slides.reduce(
+        (closest, slide, index) =>
+          Math.abs(slide.getBoundingClientRect().top) <
+          Math.abs(slides[closest].getBoundingClientRect().top)
+            ? index
+            : closest,
+        0,
+      );
+      const next = Math.max(
+        0,
+        Math.min(slides.length - 1, current + direction),
+      );
       if (next === current) return;
       locked = true;
       slides[next]?.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.setTimeout(() => { locked = false; }, 850);
+      window.setTimeout(() => {
+        locked = false;
+      }, 850);
     };
     const onWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) < 10 || (event.target as HTMLElement)?.closest("input, select, textarea")) return;
+      if (
+        Math.abs(event.deltaY) < 10 ||
+        (event.target as HTMLElement)?.closest("input, select, textarea")
+      )
+        return;
       event.preventDefault();
       go(event.deltaY > 0 ? 1 : -1);
     };
     const onKey = (event: KeyboardEvent) => {
-      if ((event.target as HTMLElement)?.matches("input, select, textarea")) return;
-      if (["ArrowDown", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(1); }
-      if (["ArrowUp", "PageUp"].includes(event.key)) { event.preventDefault(); go(-1); }
-      if (event.key === "Home") { event.preventDefault(); getSlides()[0]?.scrollIntoView({ behavior: "smooth" }); }
-      if (event.key === "End") { event.preventDefault(); getSlides().at(-1)?.scrollIntoView({ behavior: "smooth" }); }
+      if ((event.target as HTMLElement)?.matches("input, select, textarea"))
+        return;
+      if (["ArrowDown", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        go(1);
+      }
+      if (["ArrowUp", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        go(-1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        getSlides()[0]?.scrollIntoView({ behavior: "smooth" });
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        getSlides().at(-1)?.scrollIntoView({ behavior: "smooth" });
+      }
     };
-    const onTouchStart = (event: TouchEvent) => { touchStart = event.touches[0]?.clientY ?? 0; };
-    const onTouchEnd = (event: TouchEvent) => { const distance = touchStart - (event.changedTouches[0]?.clientY ?? touchStart); if (Math.abs(distance) > 45) go(distance > 0 ? 1 : -1); };
+    const onTouchStart = (event: TouchEvent) => {
+      touchStart = event.touches[0]?.clientY ?? 0;
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      const distance =
+        touchStart - (event.changedTouches[0]?.clientY ?? touchStart);
+      if (Math.abs(distance) > 45) go(distance > 0 ? 1 : -1);
+    };
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => { window.removeEventListener("wheel", onWheel); window.removeEventListener("keydown", onKey); window.removeEventListener("touchstart", onTouchStart); window.removeEventListener("touchend", onTouchEnd); };
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
   }, []);
-  const matchesOpportunity = (o: typeof opportunities[number]) =>
-    (probabilityFilter === "All probability" || o.probability === probabilityFilter) &&
+  const matchesOpportunity = (o: (typeof opportunities)[number]) =>
+    (probabilityFilter === "All probability" ||
+      o.probability === probabilityFilter) &&
     (statusFilter === "All status" || o.status === statusFilter);
-  const visibleClients = clients.filter(client =>
-    (industryFilter === "All industries" || client.industry === industryFilter) &&
-    (maturityFilter === "All maturity" || client.maturityStatus === maturityFilter) &&
-    opportunities.some(o => o.clientId === client.id && matchesOpportunity(o))
+  const visibleClients = clients.filter(
+    (client) =>
+      (industryFilter === "All industries" ||
+        client.industry === industryFilter) &&
+      (maturityFilter === "All maturity" ||
+        client.maturityStatus === maturityFilter) &&
+      opportunities.some(
+        (o) => o.clientId === client.id && matchesOpportunity(o),
+      ),
   );
   const visibleOpportunities = opportunities.filter(matchesOpportunity);
-  const lanes = { build: Math.round(budget * .3), platform: Math.round(budget * .35), ai: Math.round(budget * .25), delivery: Math.round(budget * .1) };
-  return <div className="presentation"><header className="presentation-nav"><button className="brand" onClick={() => jump("overview")}><span className="brand-mark"/><span><b>iLAB</b><small>AI STRATEGY HUB</small></span></button><nav>{sections.map((s, i) => <button key={s} onClick={() => jump(s.toLowerCase())}><span>0{i + 1}</span>{s}</button>)}</nav><span className="presentation-status"><i/> LIVE STRATEGY VIEW</span></header><main>
-    <section id="overview" className="presentation-hero"><div className="hero-copy"><span className="eyebrow">iLAB / AI TRANSFORMATION CAPABILITY</span><h1>iLab:<br/><em>Your AI Transformation is Here</em></h1><p>Turn ideas into intelligent, reusable delivery.</p><div className="hero-credits"><span>Clementine Pages (HK/TRNF)</span><span>Jacob Weglarz (HK/TRNF)</span></div><button className="hero-jump" onClick={() => jump("portfolio")}>EXPLORE THE SYSTEM ↓</button></div><div className="hero-visual" aria-label="Animated network globe with AI agents"><div className="world-orbit world-orbit-a"/><div className="world-orbit world-orbit-b"/><div className="world-dots">{Array.from({ length: 42 }, (_, i) => <i key={i} style={{ "--i": i } as CSSProperties}/>)}</div><span className="agent agent-a">✦</span><span className="agent agent-b">✦</span><span className="agent agent-c">✦</span></div></section>
-    <section className="presentation-section" id="portfolio"><div className="section-head"><div><span className="eyebrow">01 / PORTFOLIO</span><h2>What iLab brings to the table</h2></div><span className="muted">CLICK TO EXPAND · CLICK AGAIN TO COLLAPSE</span></div><div className="pillar-grid">{[{t:"POVs",n:povs.length,d:"Strategic perspectives and frameworks.",info:"AI in Finance · AI Governance · AI Strategy · Actuarial & FP&A · AI Deployment / Scale Plan"},{t:"Capabilities",n:capabilities.length,d:"Specialist delivery expertise.",info:"Oracle AI Squad · Rapid POC Build Squad · AI Governance · AI Data Readiness"},{t:"Global Assets",n:4,d:"Proven global methods and accelerators.",info:"Trusted AI · SMEs Connection · Ways of Working · Global Glossary"},{t:"Internal Assets",n:assets.length - 1,d:"Reusable solutions built inside iLab.",info:"DeliveryIQ · TalentIQ · ProposalIQ · InsightsIQ · ProcureIQ · ReinTreatyIQ · AI Reporting Control"},{t:"Technology",n:3,d:"Foundations for scaled delivery.",info:"Workbench Access · KiBox · Copilot Roll Out"}].map(x => <button className={expandedPillar === x.t ? "expanded" : ""} key={x.t} aria-expanded={expandedPillar === x.t} onClick={() => setExpandedPillar(expandedPillar === x.t ? null : x.t)}><strong>{String(x.n).padStart(2,"0")}</strong><h3>{x.t}</h3><p>{x.d}</p><span>{expandedPillar === x.t ? "HIDE DETAILS ↑" : "REVEAL DETAILS ↓"}</span>{expandedPillar === x.t && <div className="pillar-detail"><b>INCLUDED</b><p>{x.info}</p></div>}</button>)}</div></section>
-    <section className="presentation-section" id="pipeline"><div className="section-head"><div><span className="eyebrow">02 / CLIENT DEMAND</span><h2>The opportunity landscape</h2></div><span className="muted">{visibleClients.length} OF {clients.length} CLIENTS · {visibleOpportunities.length} THREADS</span></div><div className="pipeline-filters"><select value={probabilityFilter} onChange={e => setProbabilityFilter(e.target.value)} aria-label="Filter by probability"><option>All probability</option><option>High</option><option>Medium</option><option>Low</option><option>Medium / Low</option></select><select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} aria-label="Filter by status"><option>All status</option><option>Active</option><option>Delivered</option><option>Discovery</option></select><select value={industryFilter} onChange={e => setIndustryFilter(e.target.value)} aria-label="Filter by industry"><option>All industries</option>{Array.from(new Set(clients.map(c => c.industry))).map(industry => <option key={industry}>{industry}</option>)}</select><select value={maturityFilter} onChange={e => setMaturityFilter(e.target.value)} aria-label="Filter by client maturity"><option>All maturity</option>{Array.from(new Set(clients.map(c => c.maturityStatus))).map(maturity => <option key={maturity}>{maturity}</option>)}</select></div><div className="presentation-client-grid">{visibleClients.map((client, i) => { const os = opportunities.filter(o => o.clientId === client.id && matchesOpportunity(o)); return <button className="presentation-client" key={client.id} onClick={() => setDetail({ title: client.name, text: `${client.industry} · ${client.geography}. Current focus: ${client.focus}. AI maturity remains ${client.maturityStatus.toLowerCase()} until evidence is added.` })}><Logo name={client.name} index={i}/><div><h3>{client.name}</h3><span>{client.industry}</span></div><b>{os.length}</b><small>OPPORTUNITIES</small><p>{client.focus}</p></button>; })}</div><div className="opportunity-strip">{visibleOpportunities.slice(0, 6).map(o => <button key={o.id} onClick={() => setDetail({ title: o.name, text: o.currentPosition })}><span>{o.probability}</span><strong>{o.name}</strong><small>{clients.find(c => c.id === o.clientId)?.name}</small>↗</button>)}</div></section>
-    <section className="presentation-section" id="readiness"><div className="section-head"><div><span className="eyebrow">03 / DELIVERY ENGINE</span><h2>The maturity gap</h2></div><span className="muted">CURRENT STATE → TARGET STATE</span></div><div className="gap-grid">{readiness.map(r => <button key={r.id} onClick={() => setDetail({ title: r.name, text: `${r.description} Required action: ${r.need}` })}><span className={`gap-status ${r.status.toLowerCase().replaceAll(" ","-")}`}>{r.status}</span><h3>{r.name}</h3><p>{r.description}</p><div className="gap-line"><i/><span>{r.need}</span></div></button>)}</div></section>
-    <section className="presentation-section" id="roadmap"><div className="section-head"><div><span className="eyebrow">04 / STRATEGIC HORIZON</span><h2>From intention to execution</h2></div><span className="muted">QUARTERLY DELIVERY VIEW</span></div><div className="story-roadmap"><div className="roadmap-quarter-head"><span>SWIM LANE</span>{["2026 Q3","2026 Q4","2027 Q1","2027 Q2"].map(q => <b key={q}>{q}</b>)}</div>{["Market","Technology","Our People"].map(stream => <div className="story-lane" key={stream}><strong>{stream}</strong>{["2026 Q3","2026 Q4","2027 Q1","2027 Q2"].map(q => <div className="roadmap-quarter" key={q}>{roadmap.filter(r => r.stream === stream && (r.period === q || (q === "2027 Q1" && r.period === "2027 H1"))).map(item => <button key={item.id} onClick={() => setDetail({ title: item.name, text: `${item.period} · ${item.status}. Objective, owner and dependencies are editable in the intelligence model.` })}><span>{item.status}</span><b>{item.name}</b></button>)}</div>)}</div>)}</div></section>
-    <section className="presentation-section" id="ecosystem"><div className="section-head"><div><span className="eyebrow">05 / RELATIONSHIP GRAPH</span><h2>The network behind delivery</h2></div></div><div className="story-ecosystem"><div className="story-core">iLAB<span>CONNECTED ENGINE</span></div>{collaborations.map((c, i) => <button className={`story-node story-node-${i} ${c.id === "da-team" ? "external-node" : ""}`} key={c.id} onClick={() => setDetail({ title: c.name, text: `${c.relationship}. Contribution: ${c.contribution}. Markets: ${c.markets}.` })}><i/><b>{c.name}</b><small>{c.group}</small></button>)}<span className="connection connection-a"/><span className="connection connection-b"/><span className="connection connection-c"/></div></section>
-    <section className="presentation-section ask-section" id="what we need"><div className="section-head"><div><span className="eyebrow">07 / ENABLEMENT REQUEST</span><h2>What we need from you</h2><p className="section-intro">A controlled monthly sandbox budget to turn promising demonstrations into repeatable AI transformation capability.</p></div><div className="budget-total"><span>MONTHLY SANDBOX BUDGET</span><label className="budget-edit"><span className="sr-only">Monthly sandbox budget</span><input className="budget-input" type="number" min="0" step="50" value={budget} onChange={e => setBudget(Math.max(0, Number(e.target.value) || 0))} aria-label="Monthly sandbox budget"/><b>USD</b></label><small>EDITABLE ASSUMPTION</small></div></div><div className="sankey-wrap"><svg className="sankey" viewBox="0 0 1100 430" role="img" aria-label={`US$${budget} budget split flowing into AI transformation outcomes`}><defs><linearGradient id="flow-build" x1="0" x2="1"><stop stopColor="#8f315f" stopOpacity=".75"/><stop offset="1" stopColor="#c7a6ff" stopOpacity=".25"/></linearGradient><linearGradient id="flow-platform" x1="0" x2="1"><stop stopColor="#8f315f" stopOpacity=".65"/><stop offset="1" stopColor="#f04a52" stopOpacity=".25"/></linearGradient><linearGradient id="flow-ai" x1="0" x2="1"><stop stopColor="#c7a6ff" stopOpacity=".7"/><stop offset="1" stopColor="#c7a6ff" stopOpacity=".2"/></linearGradient><linearGradient id="flow-delivery" x1="0" x2="1"><stop stopColor="#f04a52" stopOpacity=".6"/><stop offset="1" stopColor="#f3ad70" stopOpacity=".25"/></linearGradient></defs><path className="sankey-flow flow-build" d="M190 112 C350 112 360 48 510 48 L510 89 C360 89 350 153 190 153Z"/><path className="sankey-flow flow-platform" d="M190 153 C350 153 360 116 510 116 L510 164 C360 164 350 201 190 201Z"/><path className="sankey-flow flow-ai" d="M190 201 C350 201 360 202 510 202 L510 237 C360 237 350 236 190 236Z"/><path className="sankey-flow flow-delivery" d="M190 236 C350 236 360 286 510 286 L510 302 C360 302 350 252 190 252Z"/><path className="sankey-flow outcome-one" d="M590 48 C730 48 748 86 890 86 L890 132 C748 132 730 89 590 89Z"/><path className="sankey-flow outcome-two" d="M590 116 C730 116 748 152 890 152 L890 193 C748 193 730 164 590 164Z"/><path className="sankey-flow outcome-three" d="M590 202 C730 202 748 218 890 218 L890 255 C748 255 730 237 590 237Z"/><path className="sankey-flow outcome-four" d="M590 286 C730 286 748 282 890 282 L890 320 C748 320 730 302 590 302Z"/><rect className="sankey-node budget-node" x="58" y="112" width="132" height="140" rx="4"/><rect className="sankey-node outcome-node" x="890" y="86" width="160" height="234" rx="4"/><text className="sankey-big" x="124" y="178" textAnchor="middle">${budget}</text><text className="sankey-label" x="124" y="205" textAnchor="middle">MONTHLY</text><text className="sankey-label" x="124" y="220" textAnchor="middle">SANDBOX</text><text className="sankey-label" x="970" y="70" textAnchor="middle">WHAT THIS FUELS</text><text className="sankey-text" x="235" y="102">BUILD TOOLS · ${lanes.build}</text><text className="sankey-text" x="235" y="184">PLATFORM · ${lanes.platform}</text><text className="sankey-text" x="235" y="229">AI USAGE · ${lanes.ai}</text><text className="sankey-text" x="235" y="278">DELIVERY ENABLEMENT · ${lanes.delivery}</text><text className="sankey-outcome" x="910" y="112">FASTER POC</text><text className="sankey-sub" x="910" y="126">CYCLES</text><text className="sankey-outcome" x="910" y="177">REUSABLE</text><text className="sankey-sub" x="910" y="191">ASSETS</text><text className="sankey-outcome" x="910" y="243">SAFER CLIENT</text><text className="sankey-sub" x="910" y="257">DEMOS</text><text className="sankey-outcome" x="910" y="307">ROUTE TO</text><text className="sankey-sub" x="910" y="321">MARKET</text></svg></div></section>
-  </main>{detail && <Detail title={detail.title} text={detail.text} close={() => setDetail(null)}/>}</div>;
+  const lanes = {
+    build: Math.round(budget * 0.3),
+    platform: Math.round(budget * 0.35),
+    ai: Math.round(budget * 0.25),
+    delivery: Math.round(budget * 0.1),
+  };
+  return (
+    <div className="presentation">
+      <header className="presentation-nav">
+        <button className="brand" onClick={() => jump("overview")}>
+          <span className="brand-mark" />
+          <span>
+            <b>iLAB</b>
+            <small>AI STRATEGY HUB</small>
+          </span>
+        </button>
+        <nav>
+          {sections.map((s, i) => (
+            <button key={s} onClick={() => jump(s.toLowerCase())}>
+              <span>0{i + 1}</span>
+              {s}
+            </button>
+          ))}
+        </nav>
+        <span className="presentation-status">
+          <i /> LIVE STRATEGY VIEW
+        </span>
+      </header>
+      <main>
+        <section id="overview" className="presentation-hero">
+          <div className="hero-copy">
+            <span className="eyebrow">iLAB / AI TRANSFORMATION CAPABILITY</span>
+            <h1>
+              iLab:
+              <br />
+              <em>Your AI Transformation is Here</em>
+            </h1>
+            <p>Turn ideas into intelligent, reusable delivery.</p>
+            <div className="hero-credits">
+              <span>Clementine Pages (HK/TRNF)</span>
+              <span>Jacob Weglarz (HK/TRNF)</span>
+            </div>
+            <button className="hero-jump" onClick={() => jump("portfolio")}>
+              EXPLORE THE SYSTEM ↓
+            </button>
+          </div>
+          <div
+            className="hero-visual"
+            aria-label="Animated network globe with AI agents"
+          >
+            <div className="world-orbit world-orbit-a" />
+            <div className="world-orbit world-orbit-b" />
+            <div className="world-dots">
+              {Array.from({ length: 42 }, (_, i) => (
+                <i key={i} style={{ "--i": i } as CSSProperties} />
+              ))}
+            </div>
+            <span className="agent agent-a">✦</span>
+            <span className="agent agent-b">✦</span>
+            <span className="agent agent-c">✦</span>
+          </div>
+        </section>
+        <section className="presentation-section" id="portfolio">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">01 / PORTFOLIO</span>
+              <h2>What iLab brings to the table</h2>
+            </div>
+            <span className="muted">
+              CLICK TO EXPAND · CLICK AGAIN TO COLLAPSE
+            </span>
+          </div>
+          <div className="pillar-grid">
+            {[
+              {
+                t: "POVs",
+                n: povs.length,
+                d: "Strategic perspectives and frameworks.",
+                info: "AI in Finance · AI Governance · AI Strategy · Actuarial & FP&A · AI Deployment / Scale Plan",
+              },
+              {
+                t: "Capabilities",
+                n: capabilities.length,
+                d: "Specialist delivery expertise.",
+                info: "Oracle AI Squad · Rapid POC Build Squad · AI Governance · AI Data Readiness",
+              },
+              {
+                t: "Global Assets",
+                n: 4,
+                d: "Proven global methods and accelerators.",
+                info: "Trusted AI · SMEs Connection · Ways of Working · Global Glossary",
+              },
+              {
+                t: "Internal Assets",
+                n: assets.length - 1,
+                d: "Reusable solutions built inside iLab.",
+                info: "DeliveryIQ · TalentIQ · ProposalIQ · InsightsIQ · ProcureIQ · ReinTreatyIQ · AI Reporting Control",
+              },
+              {
+                t: "Technology",
+                n: 3,
+                d: "Foundations for scaled delivery.",
+                info: "Workbench Access · KiBox · Copilot Roll Out",
+              },
+            ].map((x) => (
+              <button
+                className={expandedPillar === x.t ? "expanded" : ""}
+                key={x.t}
+                aria-expanded={expandedPillar === x.t}
+                onClick={() =>
+                  setExpandedPillar(expandedPillar === x.t ? null : x.t)
+                }
+              >
+                <strong>{String(x.n).padStart(2, "0")}</strong>
+                <h3>{x.t}</h3>
+                <p>{x.d}</p>
+                <span>
+                  {expandedPillar === x.t
+                    ? "HIDE DETAILS ↑"
+                    : "REVEAL DETAILS ↓"}
+                </span>
+                {expandedPillar === x.t && (
+                  <div className="pillar-detail">
+                    <b>INCLUDED</b>
+                    <p>{x.info}</p>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="presentation-section" id="pipeline">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">02 / CLIENT DEMAND</span>
+              <h2>The opportunity landscape</h2>
+            </div>
+            <span className="muted">
+              {visibleClients.length} OF {clients.length} CLIENTS ·{" "}
+              {visibleOpportunities.length} THREADS
+            </span>
+          </div>
+          <div className="pipeline-filters">
+            <select
+              value={probabilityFilter}
+              onChange={(e) => setProbabilityFilter(e.target.value)}
+              aria-label="Filter by probability"
+            >
+              <option>All probability</option>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+              <option>Medium / Low</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              aria-label="Filter by status"
+            >
+              <option>All status</option>
+              <option>Active</option>
+              <option>Delivered</option>
+              <option>Discovery</option>
+            </select>
+            <select
+              value={industryFilter}
+              onChange={(e) => setIndustryFilter(e.target.value)}
+              aria-label="Filter by industry"
+            >
+              <option>All industries</option>
+              {Array.from(new Set(clients.map((c) => c.industry))).map(
+                (industry) => (
+                  <option key={industry}>{industry}</option>
+                ),
+              )}
+            </select>
+            <select
+              value={maturityFilter}
+              onChange={(e) => setMaturityFilter(e.target.value)}
+              aria-label="Filter by client maturity"
+            >
+              <option>All maturity</option>
+              {Array.from(new Set(clients.map((c) => c.maturityStatus))).map(
+                (maturity) => (
+                  <option key={maturity}>{maturity}</option>
+                ),
+              )}
+            </select>
+          </div>
+          <div className="presentation-client-grid">
+            {visibleClients.map((client, i) => {
+              const os = opportunities.filter(
+                (o) => o.clientId === client.id && matchesOpportunity(o),
+              );
+              return (
+                <button
+                  className="presentation-client"
+                  key={client.id}
+                  onClick={() =>
+                    setDetail({
+                      title: client.name,
+                      text: `${client.industry} · ${client.geography}. Current focus: ${client.focus}. AI maturity remains ${client.maturityStatus.toLowerCase()} until evidence is added.`,
+                    })
+                  }
+                >
+                  <Logo name={client.name} index={i} />
+                  <div>
+                    <h3>{client.name}</h3>
+                    <span>{client.industry}</span>
+                  </div>
+                  <b>{os.length}</b>
+                  <small>OPPORTUNITIES</small>
+                  <p>{client.focus}</p>
+                </button>
+              );
+            })}
+          </div>
+          <div className="opportunity-strip">
+            {visibleOpportunities.slice(0, 6).map((o) => (
+              <button
+                key={o.id}
+                onClick={() =>
+                  setDetail({ title: o.name, text: o.currentPosition })
+                }
+              >
+                <span>{o.probability}</span>
+                <strong>{o.name}</strong>
+                <small>{clients.find((c) => c.id === o.clientId)?.name}</small>
+                ↗
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="presentation-section" id="readiness">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">03 / DELIVERY ENGINE</span>
+              <h2>The maturity gap</h2>
+            </div>
+            <span className="muted">CURRENT STATE → TARGET STATE</span>
+          </div>
+          <div className="gap-grid">
+            {readiness.map((r) => (
+              <button
+                key={r.id}
+                onClick={() =>
+                  setDetail({
+                    title: r.name,
+                    text: `${r.description} Required action: ${r.need}`,
+                  })
+                }
+              >
+                <span
+                  className={`gap-status ${r.status.toLowerCase().replaceAll(" ", "-")}`}
+                >
+                  {r.status}
+                </span>
+                <h3>{r.name}</h3>
+                <p>{r.description}</p>
+                <div className="gap-line">
+                  <i />
+                  <span>{r.need}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="presentation-section" id="roadmap">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">04 / STRATEGIC HORIZON</span>
+              <h2>From intention to execution</h2>
+            </div>
+            <span className="muted">QUARTERLY DELIVERY VIEW</span>
+          </div>
+          <div className="story-roadmap">
+            <div className="roadmap-quarter-head">
+              <span>SWIM LANE</span>
+              {["2026 Q3", "2026 Q4", "2027 Q1", "2027 Q2"].map((q) => (
+                <b key={q}>{q}</b>
+              ))}
+            </div>
+            {["Market", "Technology", "Our People"].map((stream) => (
+              <div className="story-lane" key={stream}>
+                <strong>{stream}</strong>
+                {["2026 Q3", "2026 Q4", "2027 Q1", "2027 Q2"].map((q) => (
+                  <div className="roadmap-quarter" key={q}>
+                    {roadmap
+                      .filter(
+                        (r) =>
+                          r.stream === stream &&
+                          (r.period === q ||
+                            (q === "2027 Q1" && r.period === "2027 H1")),
+                      )
+                      .map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() =>
+                            setDetail({
+                              title: item.name,
+                              text: `${item.period} · ${item.status}. Objective, owner and dependencies are editable in the intelligence model.`,
+                            })
+                          }
+                        >
+                          <span>{item.status}</span>
+                          <b>{item.name}</b>
+                        </button>
+                      ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="presentation-section" id="ecosystem">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">05 / RELATIONSHIP GRAPH</span>
+              <h2>The network behind delivery</h2>
+            </div>
+          </div>
+          <div className="story-ecosystem">
+            <div className="story-core">
+              iLAB<span>CONNECTED ENGINE</span>
+            </div>
+            {collaborations.map((c, i) => (
+              <button
+                className={`story-node story-node-${i} ${c.id === "da-team" ? "external-node" : ""}`}
+                key={c.id}
+                onClick={() =>
+                  setDetail({
+                    title: c.name,
+                    text: `${c.relationship}. Contribution: ${c.contribution}. Markets: ${c.markets}.`,
+                  })
+                }
+              >
+                <i />
+                <b>{c.name}</b>
+                <small>{c.group}</small>
+              </button>
+            ))}
+            <span className="connection connection-a" />
+            <span className="connection connection-b" />
+            <span className="connection connection-c" />
+          </div>
+        </section>
+        <section className="presentation-section ask-section" id="what we need">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">07 / ENABLEMENT REQUEST</span>
+              <h2>What we need from you</h2>
+              <p className="section-intro">
+                A controlled monthly sandbox budget to turn promising
+                demonstrations into repeatable AI transformation capability.
+              </p>
+            </div>
+            <div className="budget-total">
+              <span>MONTHLY SANDBOX BUDGET</span>
+              <label className="budget-edit">
+                <span className="sr-only">Monthly sandbox budget</span>
+                <input
+                  className="budget-input"
+                  type="number"
+                  min="0"
+                  step="50"
+                  value={budget}
+                  onChange={(e) =>
+                    setBudget(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  aria-label="Monthly sandbox budget"
+                />
+                <b>USD</b>
+              </label>
+              <small>EDITABLE ASSUMPTION</small>
+            </div>
+          </div>
+          <div className="sankey-wrap">
+            <svg
+              className="sankey"
+              viewBox="0 0 1100 430"
+              role="img"
+              aria-label={`US$${budget} budget split flowing into AI transformation outcomes`}
+            >
+              <defs>
+                <linearGradient id="flow-build" x1="0" x2="1">
+                  <stop stopColor="#8f315f" stopOpacity=".75" />
+                  <stop offset="1" stopColor="#c7a6ff" stopOpacity=".25" />
+                </linearGradient>
+                <linearGradient id="flow-platform" x1="0" x2="1">
+                  <stop stopColor="#8f315f" stopOpacity=".65" />
+                  <stop offset="1" stopColor="#f04a52" stopOpacity=".25" />
+                </linearGradient>
+                <linearGradient id="flow-ai" x1="0" x2="1">
+                  <stop stopColor="#c7a6ff" stopOpacity=".7" />
+                  <stop offset="1" stopColor="#c7a6ff" stopOpacity=".2" />
+                </linearGradient>
+                <linearGradient id="flow-delivery" x1="0" x2="1">
+                  <stop stopColor="#f04a52" stopOpacity=".6" />
+                  <stop offset="1" stopColor="#f3ad70" stopOpacity=".25" />
+                </linearGradient>
+              </defs>
+              <path
+                className="sankey-flow flow-build"
+                d="M190 112 C350 112 360 48 510 48 L510 89 C360 89 350 153 190 153Z"
+              />
+              <path
+                className="sankey-flow flow-platform"
+                d="M190 153 C350 153 360 116 510 116 L510 164 C360 164 350 201 190 201Z"
+              />
+              <path
+                className="sankey-flow flow-ai"
+                d="M190 201 C350 201 360 202 510 202 L510 237 C360 237 350 236 190 236Z"
+              />
+              <path
+                className="sankey-flow flow-delivery"
+                d="M190 236 C350 236 360 286 510 286 L510 302 C360 302 350 252 190 252Z"
+              />
+              <path
+                className="sankey-flow outcome-one"
+                d="M590 48 C730 48 748 86 890 86 L890 132 C748 132 730 89 590 89Z"
+              />
+              <path
+                className="sankey-flow outcome-two"
+                d="M590 116 C730 116 748 152 890 152 L890 193 C748 193 730 164 590 164Z"
+              />
+              <path
+                className="sankey-flow outcome-three"
+                d="M590 202 C730 202 748 218 890 218 L890 255 C748 255 730 237 590 237Z"
+              />
+              <path
+                className="sankey-flow outcome-four"
+                d="M590 286 C730 286 748 282 890 282 L890 320 C748 320 730 302 590 302Z"
+              />
+              <path className="sankey-bridge bridge-build" d="M500 48 C535 48 555 48 590 48 L590 89 C555 89 535 89 500 89Z" />
+              <path className="sankey-bridge bridge-platform" d="M500 116 C535 116 555 116 590 116 L590 164 C555 164 535 164 500 164Z" />
+              <path className="sankey-bridge bridge-ai" d="M500 202 C535 202 555 202 590 202 L590 237 C555 237 535 237 500 237Z" />
+              <path className="sankey-bridge bridge-delivery" d="M500 286 C535 286 555 286 590 286 L590 302 C555 302 535 302 500 302Z" />
+              <rect
+                className="sankey-node budget-node"
+                x="58"
+                y="112"
+                width="132"
+                height="140"
+                rx="4"
+              />
+              <rect
+                className="sankey-node outcome-node"
+                x="890"
+                y="86"
+                width="160"
+                height="234"
+                rx="4"
+              />
+              <text className="sankey-big" x="124" y="178" textAnchor="middle">
+                ${budget}
+              </text>
+              <text
+                className="sankey-label"
+                x="124"
+                y="205"
+                textAnchor="middle"
+              >
+                MONTHLY
+              </text>
+              <text
+                className="sankey-label"
+                x="124"
+                y="220"
+                textAnchor="middle"
+              >
+                SANDBOX
+              </text>
+              <text className="sankey-label" x="970" y="70" textAnchor="middle">
+                WHAT THIS FUELS
+              </text>
+              <text className="sankey-text" x="235" y="102">
+                BUILD TOOLS · ${lanes.build}
+              </text>
+              <text className="sankey-text" x="235" y="184">
+                PLATFORM · ${lanes.platform}
+              </text>
+              <text className="sankey-text" x="235" y="229">
+                AI USAGE · ${lanes.ai}
+              </text>
+              <text className="sankey-text" x="235" y="278">
+                DELIVERY ENABLEMENT · ${lanes.delivery}
+              </text>
+              <text className="sankey-outcome" x="910" y="112">
+                FASTER POC
+              </text>
+              <text className="sankey-sub" x="910" y="126">
+                CYCLES
+              </text>
+              <text className="sankey-outcome" x="910" y="177">
+                REUSABLE
+              </text>
+              <text className="sankey-sub" x="910" y="191">
+                ASSETS
+              </text>
+              <text className="sankey-outcome" x="910" y="243">
+                SAFER CLIENT
+              </text>
+              <text className="sankey-sub" x="910" y="257">
+                DEMOS
+              </text>
+              <text className="sankey-outcome" x="910" y="307">
+                ROUTE TO
+              </text>
+              <text className="sankey-sub" x="910" y="321">
+                MARKET
+              </text>
+            </svg>
+          </div>
+        </section>
+      </main>
+      {detail && (
+        <Detail
+          title={detail.title}
+          text={detail.text}
+          close={() => setDetail(null)}
+        />
+      )}
+    </div>
+  );
 }
