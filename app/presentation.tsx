@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { assets, capabilities, clients, collaborations, opportunities, povs, readiness, roadmap } from "../data/command-center";
 
 const sections = ["Overview", "Portfolio", "Pipeline", "Readiness", "Roadmap", "Ecosystem", "Insights", "What we need"];
@@ -16,6 +16,40 @@ export default function Presentation() {
   const [industryFilter, setIndustryFilter] = useState("All industries");
   const [maturityFilter, setMaturityFilter] = useState("All maturity");
   const [budget, setBudget] = useState(500);
+  useEffect(() => {
+    const getSlides = () => Array.from(document.querySelectorAll<HTMLElement>(".presentation main > section"));
+    let locked = false;
+    let touchStart = 0;
+    const go = (direction: number) => {
+      if (locked) return;
+      const slides = getSlides();
+      const current = slides.reduce((closest, slide, index) => Math.abs(slide.getBoundingClientRect().top) < Math.abs(slides[closest].getBoundingClientRect().top) ? index : closest, 0);
+      const next = Math.max(0, Math.min(slides.length - 1, current + direction));
+      if (next === current) return;
+      locked = true;
+      slides[next]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => { locked = false; }, 850);
+    };
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) < 10 || (event.target as HTMLElement)?.closest("input, select, textarea")) return;
+      event.preventDefault();
+      go(event.deltaY > 0 ? 1 : -1);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.target as HTMLElement)?.matches("input, select, textarea")) return;
+      if (["ArrowDown", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(1); }
+      if (["ArrowUp", "PageUp"].includes(event.key)) { event.preventDefault(); go(-1); }
+      if (event.key === "Home") { event.preventDefault(); getSlides()[0]?.scrollIntoView({ behavior: "smooth" }); }
+      if (event.key === "End") { event.preventDefault(); getSlides().at(-1)?.scrollIntoView({ behavior: "smooth" }); }
+    };
+    const onTouchStart = (event: TouchEvent) => { touchStart = event.touches[0]?.clientY ?? 0; };
+    const onTouchEnd = (event: TouchEvent) => { const distance = touchStart - (event.changedTouches[0]?.clientY ?? touchStart); if (Math.abs(distance) > 45) go(distance > 0 ? 1 : -1); };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => { window.removeEventListener("wheel", onWheel); window.removeEventListener("keydown", onKey); window.removeEventListener("touchstart", onTouchStart); window.removeEventListener("touchend", onTouchEnd); };
+  }, []);
   const high = opportunities.filter(o => o.probability === "High").length;
   const matchesOpportunity = (o: typeof opportunities[number]) =>
     (probabilityFilter === "All probability" || o.probability === probabilityFilter) &&
